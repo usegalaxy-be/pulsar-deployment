@@ -73,8 +73,6 @@ resource "openstack_compute_instance_v2" "exec-node" {
             - name: ansible-role-htcondor
               vars:
                 htcondor_version: 10.x
-                htcondor_role: execute
-                htcondor_copy_template: false
                 htcondor_type_of_node: wn
                 htcondor_role_execute: true
                 htcondor_server: ${openstack_compute_instance_v2.central-manager.network.1.fixed_ip_v4}
@@ -95,7 +93,7 @@ resource "openstack_compute_instance_v2" "exec-node" {
       - [ sh, -xc, "sed -i 's|localhost.localdomain|$(hostname -f)|g' /etc/telegraf/telegraf.conf" ]
       - systemctl restart telegraf
       - [ python3, -m, pip, install, ansible ]
-      - [ ansible-galaxy, install, -p, /home/centos/roles, "git+https://github.com/grycap/ansible-role-htcondor.git,1.0.0"]
+      - [ ansible-galaxy, install, -p, /home/centos/roles, "git+https://github.com/usegalaxy-it/ansible-role-htcondor.git"]
       - [ ansible-playbook, -i, 'localhost,', /home/centos/condor.yml]
       - systemctl start condor
       EOF

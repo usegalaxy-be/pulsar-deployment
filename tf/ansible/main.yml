@@ -30,8 +30,6 @@
         htcondor_type_of_node: "front"
         htcondor_role_manager: true
         htcondor_role_submit: true
-        htcondor_role: "central-manager"
-        htcondor_copy_template: false
     - role: usegalaxy-eu.bashrc
 
   tasks:
