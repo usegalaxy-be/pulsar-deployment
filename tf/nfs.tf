@@ -30,7 +30,7 @@ resource "openstack_compute_instance_v2" "nfs-server" {
 }
 
 
-resource "openstack_blockstorage_volume_v2" "volume_nfs_data" {
+resource "openstack_blockstorage_volume_v3" "volume_nfs_data" {
   name = "${var.name_prefix}volume_nfs_data"
   size = var.nfs_disk_size
 }
