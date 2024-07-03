@@ -1,6 +1,6 @@
 resource "openstack_compute_instance_v2" "gpu-node" {
 
-  count           = "${var.gpu_node_count}"
+  count           = var.gpu_node_count
   name            = "${var.name_prefix}gpu-node-${count.index}${var.name_suffix}"
   flavor_name     = "${var.flavors["gpu-node"]}"
   image_id        = "${data.openstack_images_image_v2.vgcn-image-gpu.id}"
