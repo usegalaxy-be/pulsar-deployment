@@ -1,16 +1,16 @@
 resource "openstack_compute_instance_v2" "central-manager" {
 
   name            = "${var.name_prefix}central-manager${var.name_suffix}"
-  flavor_name     = "${var.flavors["central-manager"]}"
-  image_id        = "${data.openstack_images_image_v2.vgcn-image.id}"
-  key_pair        = "${openstack_compute_keypair_v2.my-cloud-key.name}"
-  security_groups = "${var.secgroups_cm}"
+  flavor_name     = var.flavors["central-manager"]
+  image_id        = openstack_images_image_v2.vgcn-image.id
+  key_pair        = openstack_compute_keypair_v2.my-cloud-key.name
+  security_groups = var.secgroups_cm
 
   network {
     uuid = data.openstack_networking_network_v2.external.id
   }
   network {
-    uuid = "${data.openstack_networking_network_v2.internal.id}"
+    uuid = openstack_networking_network_v2.internal.id
   }
 
   provisioner "local-exec" {
