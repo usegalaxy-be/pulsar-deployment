@@ -39,6 +39,7 @@ variable "image" {
 variable "gpu_image" {
   type = map(any)
   default = {
+//  "name"             = "vggp-gpu-v60-j16-4b8cbb05c6db-dev"
     "name"             = "<name for that gpu image>"
     "image_source_url" = "<url-to-latest-vgcn-gpu-image>"
     // you can check for the latest image on https://usegalaxy.eu/static/vgcn/ and replace this
