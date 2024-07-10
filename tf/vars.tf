@@ -28,7 +28,9 @@ variable "gpu_node_count" {
 variable "image" {
   type = map(any)
   default = {
+//  "name"             = "vggp-v60-j225-1a1df01ec8f3-dev"
     "name"             = "<name for that image>"
+//  "image_source_url" = "https://usegalaxy.eu/static/vgcn/vggp-v60-j225-1a1df01ec8f3-dev.raw"
     "image_source_url" = "<url-to-latest-vgcn-image>"
     // you can check for the latest image on https://usegalaxy.eu/static/vgcn/ and replace this
     "container_format" = "bare"
@@ -41,6 +43,7 @@ variable "gpu_image" {
   default = {
 //  "name"             = "vggp-gpu-v60-j16-4b8cbb05c6db-dev"
     "name"             = "<name for that gpu image>"
+//  "image_source_url" = "https://usegalaxy.eu/static/vgcn/vggp-gpu-v60-j16-4b8cbb05c6db-dev.raw"
     "image_source_url" = "<url-to-latest-vgcn-gpu-image>"
     // you can check for the latest image on https://usegalaxy.eu/static/vgcn/ and replace this
     "container_format" = "bare"
