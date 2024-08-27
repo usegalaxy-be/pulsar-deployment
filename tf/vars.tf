@@ -2,16 +2,16 @@
 // All variables in < > should be checked and personalized
 
 variable "nfs_disk_size" {
-  default = 3
+  default = 30
 }
 
 variable "flavors" {
   type = map
   default = {
-    "central-manager" = "<m1.medium>"
-    "nfs-server"      = "<m1.medium>"
-    "exec-node"       = "<m1.xlarge>"
-    "gpu-node"        = "<m1.small>"
+    "central-manager" = "CPUv1.small"
+    "nfs-server" = "CPUv1.medium"
+    "exec-node" = "CPUv1.xlarge"
+    "gpu-node" = "CPUv1.xlarge"
   }
 }
 
@@ -26,8 +26,8 @@ variable "gpu_node_count" {
 variable "image" {
   type = map
   default = {
-    "name"             = "vggp-v60-j225-1a1df01ec8f3-dev"
-    "image_source_url" = "https://usegalaxy.eu/static/vgcn/vggp-v60-j225-1a1df01ec8f3-dev.raw"
+    "name"             = "vggp-v60-j334-00829423b35b-dev" //"vggp-v60-j340-e3937ea797ed-dev"
+    "image_source_url" = "https://usegalaxy.eu/static/vgcn/vggp-v60-j334-00829423b35b-dev.raw" //"https://usegalaxy.eu/static/vgcn/vggp-v60-j340-e3937ea797ed-dev.raw"
     // you can check for the latest image on https://usegalaxy.eu/static/vgcn/ and replace this
     "container_format" = "bare"
     "disk_format"      = "raw"
@@ -37,8 +37,8 @@ variable "image" {
 variable "gpu_image" {
   type = map
   default = {
-    "name"             = "vggp-gpu-v60-j16-4b8cbb05c6db-dev"
-    "image_source_url" = "https://usegalaxy.eu/static/vgcn/vggp-gpu-v60-j16-4b8cbb05c6db-dev.raw"
+    "name"             = "vggp-v60-j334-00829423b35b-dev" //"vggp-v60-j340-e3937ea797ed-dev"
+    "image_source_url" = "https://usegalaxy.eu/static/vgcn/vggp-v60-j334-00829423b35b-dev.raw" // "https://usegalaxy.eu/static/vgcn/vggp-v60-j340-e3937ea797ed-dev.raw"
     // you can check for the latest image on https://usegalaxy.eu/static/vgcn/ and replace this
     "container_format" = "bare"
     "disk_format"      = "raw"
@@ -46,48 +46,52 @@ variable "gpu_image" {
 }
 
 variable "public_key" {
-  type = map
+  type = map(string)
   default = {
-    name   = "<your_VGCN_key>"
-    pubkey = "<your public key>"
+    name = "pubkey_padge01"
+    pubkey = "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAACAQCrwzM6qImxM0Qah1V48I+gcHvO0MrbDGgueqX/RqwrFW9fEOORVXBJT2aDHktStsxdLe9BapOuyS1XYfPm/OTvSh7fPZML1WA/D4xIz06rHIVcNvQuDno+NECzK7T3xrHJveOUb6i5TGb03SnqF2ApyzHdy/9h6uwmPpVeEJdfviaXzKQhj0wDVW1MiOpjrRW5Frucp/4fjIXYZQxYGIBBxgGyD0EfP68T0+83sgAOAAmos9KtLJDXUbsg+I8mKzjp+iDkc/eNbo6mpz3ZxxMtjwdJPDWwq088vR5oxyDhIcNz6PhmyifWm3kkUuZ02nUp7M8ELLdtpSah52JoE9Fdzdxv1ZtBs3q08u9/3ysE6fc4/VwO7zNaf/EpT8bR30I/5BGWKkiJsctjrZJTxACspNW6PdjRxJaXqSdHaLi5vK8DCeEZwyyRnJh8TKsOhbd8qrxUEE486LXxxVjtuwIyOtEF8xBiVstALcHPJZQ4rqT6EOc7fzgUygWWqJrTIDwmmAuwvOvTPz3jBVwlmU5Ur92y4M0GBSnretMYJIVVyiwqgp0wcZqDn34xiJ9dbEIPBQyURzi9mOd7CqNJEU0g2AnI2Mb7KfBPRn+GY2/aY8gDHTMc1utEvxmqVGf9eeuislQKqKNgHbta00lbSL8liLt4hrlykKaNE1Q7K69UNw== padge@schlat22"
   }
 }
 
 variable "name_prefix" {
-  default = "<vgcn->"
+  default = "vgcn-pulsar-"
 }
 
 variable "name_suffix" {
-  default = "<.pulsar>"
+  default = ".usegalaxy.be"
 }
 
 variable "secgroups_cm" {
   type = list
   default = [
-    "<a-public-ssh>",
-    "<ingress-private>",
-    "<egress-public>",
+    "vgcn-public-ssh",
+    "vgcn-ingress-private",
+    "vgcn-egress-public",
   ]
 }
 
 variable "secgroups" {
   type = list
   default = [
-    "<ingress-private>", //Should open at least nfs, 9618 for HTCondor and 22 for ssh
-    "<egress-public>",
+    "vgcn-ingress-private", //Should open at least nfs, 9618 for HTCondor and 22 for ssh
+    "vgcn-egress-public",
   ]
 }
 
 variable "public_network" {
-  default = "<public>"
+  default = "public"
+}
+
+variable "public_ip" {
+  default = "193.190.80.4"
 }
 
 variable "private_network" {
   type = map
   default = {
-    name        = "<vgcn-private>"
-    subnet_name = "<vgcn-private-subnet>"
-    cidr4       = "<192.52.32.0/20>" //This is important to make HTCondor work
+    name        = "VSC_00002_vm"
+    subnet_name = "VSC_00002_vm_pool"
+    cidr4       = "10.113.2.0/24" //  "<192.52.32.0/20>" //This is important to make HTCondor work
   }
 }
 
@@ -101,3 +105,14 @@ variable "pvt_key" {}
 variable "condor_pass" {}
 
 variable "mq_string" {}
+
+# VM network
+variable "central_manager_fixed_ip" {
+default = "10.113.2.10"  ## ..6.3 is current condor_head
+}
+variable "vm_network_id" {
+    default = "eaa9426b-cfb7-4b06-aa78-fafb98f87fa8"
+}
+variable "vm_pool_id" {
+    default = "7e90b6c0-29b8-4441-9f50-d47786cfbbec"
+}
