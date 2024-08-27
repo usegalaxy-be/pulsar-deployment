@@ -6,23 +6,34 @@ resource "openstack_compute_instance_v2" "central-manager" {
   key_pair        = "${openstack_compute_keypair_v2.my-cloud-key.name}"
   security_groups = "${var.secgroups_cm}"
 
-  network {
-    uuid = "${data.openstack_networking_network_v2.external.id}"
-  }
-  network {
-    uuid = "${data.openstack_networking_network_v2.internal.id}"
+//  network {
+//    uuid = "${data.openstack_networking_network_v2.external.id}"
+//  }
+//  network {
+//    uuid = "${data.openstack_networking_network_v2.internal.id}"
+//  }
+
+  network {	
+    port = "${openstack_networking_port_v2.central_manager_ip.id}"
   }
   
   provisioner "local-exec" {
     command = <<-EOF
       ansible-galaxy install -p ansible/roles usegalaxy_eu.htcondor
       sleep 60
+      ssh-keygen -f ~/.ssh/known_hosts -R '${self.access_ip_v4},'
         ANSIBLE_HOST_KEY_CHECKING=False ansible-playbook -u centos -b -i '${self.access_ip_v4},' \
-        --private-key ${var.pvt_key} --extra-vars='condor_ip_range=${var.private_network.cidr4}
+        --private-key ${var.pvt_key} --extra-vars='condor_ip_range=${var.private_network["cidr4"]}
         condor_host=${self.network.1.fixed_ip_v4} condor_password=${var.condor_pass}
         message_queue_url="${var.mq_string}"' \
         ansible/main.yml
     EOF
+  }
+
+  lifecycle {
+    ignore_changes = [
+      user_data
+    ]
   }
 
   user_data = <<-EOF

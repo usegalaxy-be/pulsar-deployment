@@ -26,6 +26,12 @@ resource "openstack_compute_instance_v2" "nfs-server" {
     delete_on_termination = true
   }
 
+  lifecycle {
+    ignore_changes = [
+      user_data
+    ]
+  }
+
   user_data = "${data.template_cloudinit_config.nfs-share.rendered}"
 }
 
