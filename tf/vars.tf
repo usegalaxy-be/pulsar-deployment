@@ -44,13 +44,13 @@ variable "flavors" {
   default = {
     "central-manager" = "CPUv1.small"
     "nfs-server" = "CPUv1.medium"
-    "exec-node" = "CPUv2.xlarge"
+    "exec-node" = "CPUv1.2xlarge"
     "gpu-node" = "CPUv1.xlarge"
   }
 }
 
 variable "exec_node_count" {
-  default = 10
+  default = 7
 }
 
 variable "gpu_node_count" {
@@ -142,7 +142,7 @@ variable "mq_string" {}
 
 # VM network
 variable "central_manager_fixed_ip" {
-default = "10.113.48.1"  ## ..6.3 is current condor_head
+default = "10.113.48.10"  ## ..6.3 is current condor_head
 }
 variable "vm_network_id" {
     default = "a213a194-49da-4952-a7d8-ec00ae9faead" // "eaa9426b-cfb7-4b06-aa78-fafb98f87fa8"

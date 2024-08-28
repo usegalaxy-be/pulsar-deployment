@@ -16,19 +16,21 @@ resource "openstack_compute_instance_v2" "central-manager" {
   network {	
     port = "${openstack_networking_port_v2.central_manager_ip.id}"
   }
-  
-  provisioner "local-exec" {
-    command = <<-EOF
-      ansible-galaxy install -p ansible/roles usegalaxy_eu.htcondor
-      sleep 60
-      ssh-keygen -f ~/.ssh/known_hosts -R '${self.access_ip_v4},'
-        ANSIBLE_HOST_KEY_CHECKING=False ansible-playbook -u centos -b -i '${self.access_ip_v4},' \
-        --private-key ${var.pvt_key} --extra-vars='condor_ip_range=${var.private_network["cidr4"]}
-        condor_host=${self.network.1.fixed_ip_v4} condor_password=${var.condor_pass}
-        message_queue_url="${var.mq_string}"' \
-        ansible/main.yml
-    EOF
-  }
+
+
+// TODO: create port forwarding rule first
+//  provisioner "local-exec" {
+//    command = <<-EOF
+//      ansible-galaxy install -p ansible/roles usegalaxy_eu.htcondor
+//      sleep 60
+//      ssh-keygen -f ~/.ssh/known_hosts -R '${self.access_ip_v4},'
+//        ANSIBLE_HOST_KEY_CHECKING=False ansible-playbook -u centos -b -i '${self.access_ip_v4},' \
+//        --private-key ${var.pvt_key} --extra-vars='condor_ip_range=${var.private_network["cidr4"]}
+//        condor_host=${self.network.0.fixed_ip_v4} condor_password=${var.condor_pass}
+//        message_queue_url="${var.mq_string}"' \
+//        ansible/main.yml
+//    EOF
+//  }
 
   lifecycle {
     ignore_changes = [

@@ -21,3 +21,4 @@ bin/
 # ansible
 .vault-password.txt
 .vault-password*.txt
+tf/ansible/roles/usegalaxy_eu.htcondor/
