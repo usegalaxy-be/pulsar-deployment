@@ -2,21 +2,55 @@
 // All variables in < > should be checked and personalized
 
 variable "nfs_disk_size" {
-  default = 30
+  default = 500
 }
+
+
+### Flavors
+
+# +----+-----------------+--------+------+-----------+-------+-----------+
+# | ID | Name            |    RAM | Disk | Ephemeral | VCPUs | Is Public |
+# +----+-----------------+--------+------+-----------+-------+-----------+
+# | 0  | CPUv1.nano      |     64 |    1 |         0 |     1 | True      |
+# | 1  | CPUv1.tiny      |    512 |   10 |         0 |     1 | True      |
+# | 10 | UPSv1.medium    |   4096 |   30 |         0 |     2 | True      |
+# | 11 | UPSv1.large     |   8192 |   40 |         0 |     4 | True      |
+# | 12 | UPSv1.2xlarge   |  61440 |   40 |         0 |    16 | True      |
+# | 13 | GPUv2.small     |   2048 |   20 |         0 |     1 | True      |
+# | 14 | GPUv2.medium    |   4096 |   30 |         0 |     2 | True      |
+# | 15 | GPUv2.large     |   8192 |   40 |         0 |     4 | True      |
+# | 16 | GPUv2.2xlarge   |  61440 |   40 |         0 |    16 | True      |
+# | 17 | UPSv1.3xlarge   | 122880 |   80 |         0 |    16 | True      |
+# | 18 | CPUv1.1_3xlarge | 184320 |   80 |         0 |    14 | True      |
+# | 19 | CPUv1.4xlarge   | 368640 |   80 |         0 |    20 | True      |
+# | 2  | CPUv1.small     |   2048 |   20 |         0 |     1 | True      |
+# | 20 | GPUv3.small     |   2048 |   20 |         0 |     1 | True      |
+# | 21 | GPUv3.medium    |   4096 |   30 |         0 |     2 | True      |
+# | 22 | GPUv3.large     |   8192 |   40 |         0 |     4 | True      |
+# | 23 | GPUv3.2xlarge   |  61440 |   40 |         0 |    16 | True      |
+# | 3  | CPUv1.medium    |   4096 |   30 |         0 |     2 | True      |
+# | 4  | CPUv1.large     |   8192 |   40 |         0 |     4 | True      |
+# | 5  | CPUv1.xlarge    |  16384 |   40 |         0 |     8 | True      |
+# | 6  | CPUv1.2xlarge   |  61440 |   40 |         0 |    16 | True      |
+# | 7  | CPUv1.3xlarge   | 122880 |   80 |         0 |    16 | True      |
+# | 8  | CPUv1.1_2xlarge |  61440 |   40 |         0 |     8 | True      |
+# | 9  | UPSv1.small     |   2048 |   20 |         0 |     1 | True      |
+# +----+-----------------+--------+------+-----------+-------+-----------+
+
+
 
 variable "flavors" {
   type = map
   default = {
     "central-manager" = "CPUv1.small"
     "nfs-server" = "CPUv1.medium"
-    "exec-node" = "CPUv1.xlarge"
+    "exec-node" = "CPUv2.xlarge"
     "gpu-node" = "CPUv1.xlarge"
   }
 }
 
 variable "exec_node_count" {
-  default = 2
+  default = 10
 }
 
 variable "gpu_node_count" {
@@ -58,7 +92,7 @@ variable "name_prefix" {
 }
 
 variable "name_suffix" {
-  default = ".usegalaxy.be"
+  default = "-vib"
 }
 
 variable "secgroups_cm" {
@@ -82,16 +116,16 @@ variable "public_network" {
   default = "public"
 }
 
-variable "public_ip" {
-  default = "193.190.80.4"
-}
+//variable "public_ip" {
+//  default = "193.190.80.53"
+//}
 
 variable "private_network" {
   type = map
   default = {
-    name        = "VSC_00002_vm"
-    subnet_name = "VSC_00002_vm_pool"
-    cidr4       = "10.113.2.0/24" //  "<192.52.32.0/20>" //This is important to make HTCondor work
+    name        = "VSC_2024_002_vm"
+    subnet_name = "VSC_2024_002_vm_pool	"
+    cidr4       = "10.113.48.0/24" //  "<192.52.32.0/20>" //This is important to make HTCondor work
   }
 }
 
@@ -108,11 +142,11 @@ variable "mq_string" {}
 
 # VM network
 variable "central_manager_fixed_ip" {
-default = "10.113.2.10"  ## ..6.3 is current condor_head
+default = "10.113.48.1"  ## ..6.3 is current condor_head
 }
 variable "vm_network_id" {
-    default = "eaa9426b-cfb7-4b06-aa78-fafb98f87fa8"
+    default = "a213a194-49da-4952-a7d8-ec00ae9faead" // "eaa9426b-cfb7-4b06-aa78-fafb98f87fa8"
 }
 variable "vm_pool_id" {
-    default = "7e90b6c0-29b8-4441-9f50-d47786cfbbec"
+    default = "ee58df97-48b4-49dc-a0c0-860757ea1ef8" //"7e90b6c0-29b8-4441-9f50-d47786cfbbec"
 }
