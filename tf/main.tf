@@ -1,3 +1,21 @@
+// NOTE: This part is to set up a port for sshing from outside of the network
+//data "openstack_networking_floatingip_v2" "public" {
+//  address = var.floatingip_address
+//  #pool = data.openstack_networking_network_v2.public.id
+//}
+//
+//
+//resource "openstack_networking_portforwarding_v2" "ssh" {
+//  //count               = var.public ? 1 : 0
+//  floatingip_id       = data.openstack_networking_floatingip_v2.public.id
+//  external_port       = var.external-ssh-port
+//  internal_port       = 22
+//  internal_port_id    = openstack_networking_port_v2.central_manager_ip.id
+//  internal_ip_address = openstack_networking_port_v2.central_manager_ip.all_fixed_ips[0]
+//  protocol            = "tcp"
+//  description         = "external-ssh"
+//}
+
 resource "openstack_compute_instance_v2" "central-manager" {
 
   name            = "${var.name_prefix}central-manager${var.name_suffix}"
@@ -18,7 +36,7 @@ resource "openstack_compute_instance_v2" "central-manager" {
   }
 
 
-// TODO: create port forwarding rule first
+// NOTE: this part fails even though the machine is accessible from the controller machine
 //  provisioner "local-exec" {
 //    command = <<-EOF
 //      ansible-galaxy install -p ansible/roles usegalaxy_eu.htcondor

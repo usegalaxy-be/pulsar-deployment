@@ -117,7 +117,7 @@ variable "public_network" {
 }
 
 //variable "public_ip" {
-//  default = "193.190.80.53"
+//  default = ""
 //}
 
 variable "private_network" {
@@ -132,6 +132,9 @@ variable "private_network" {
 variable "ssh-port" {
   default = "22"
 }
+
+//variable "external-ssh-port" {
+//}
 
 //set these variables during execution terraform apply -var "pvt_key=<~/.ssh/my_private_key>" -var "condor_pass=<MyCondorPassword>"
 variable "pvt_key" {}
