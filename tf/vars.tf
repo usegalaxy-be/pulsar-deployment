@@ -45,16 +45,16 @@ variable "flavors" {
     "central-manager" = "CPUv1.small"
     "nfs-server" = "CPUv1.medium"
     "exec-node" = "CPUv1.2xlarge"
-    "gpu-node" = "CPUv1.xlarge"
+    "gpu-node" = "GPUv2.2xlarge"
   }
 }
 
 variable "exec_node_count" {
-  default = 7
+  default = 4
 }
 
 variable "gpu_node_count" {
-  default = 0
+  default = 3
 }
 
 variable "image" {
@@ -137,11 +137,11 @@ variable "ssh-port" {
 //}
 
 //set these variables during execution terraform apply -var "pvt_key=<~/.ssh/my_private_key>" -var "condor_pass=<MyCondorPassword>"
-variable "pvt_key" {}
+#variable "pvt_key" {}
 
 variable "condor_pass" {}
 
-variable "mq_string" {}
+#variable "mq_string" {}
 
 # VM network
 variable "central_manager_fixed_ip" {

@@ -13,7 +13,7 @@ resource "openstack_compute_instance_v2" "gpu-node" {
   
   lifecycle {
     ignore_changes = [
-      user_data
+      #user_data
     ]
   }
 
@@ -97,5 +97,9 @@ resource "openstack_compute_instance_v2" "gpu-node" {
       - [ ansible-galaxy, install, -p, /home/centos/roles, usegalaxy_eu.htcondor ]
       - [ ansible-playbook, -i, 'localhost,', /home/centos/condor.yml]
       - systemctl start condor
+      - sudo dnf install -y epel-release
+      - sudo dnf config-manager --add-repo https://developer.download.nvidia.com/compute/cuda/repos/rhel9/x86_64/cuda-rhel9.repo
+      - sudo dnf clean -y all 
+      - sudo dnf install -y nvidia-driver nvidia-driver-cuda nvidia-driver-NVML 
   EOF
 }

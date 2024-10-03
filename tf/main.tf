@@ -37,6 +37,7 @@ resource "openstack_compute_instance_v2" "central-manager" {
 
 
 // NOTE: this part fails even though the machine is accessible from the controller machine
+// Works by hand
 //  provisioner "local-exec" {
 //    command = <<-EOF
 //      ansible-galaxy install -p ansible/roles usegalaxy_eu.htcondor
