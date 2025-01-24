@@ -3,7 +3,7 @@ resource "openstack_compute_instance_v2" "gpu-node" {
   count           = "${var.gpu_node_count}"
   name            = "${var.name_prefix}gpu-node-${count.index}${var.name_suffix}"
   flavor_name     = "${var.flavors["gpu-node"]}"
-  image_id        = "${data.openstack_images_image_v2.vgcn-image-gpu.id}"
+  image_id        =  openstack_images_image_v2.vgcn-image-gpu.id //"${data.openstack_images_image_v2.vgcn-image-gpu.id}"
   key_pair        = "${openstack_compute_keypair_v2.my-cloud-key.name}"
   security_groups = "${var.secgroups}"
 
@@ -49,6 +49,7 @@ resource "openstack_compute_instance_v2" "gpu-node" {
         # Advertise the GPUs
         use feature : GPUs
         GPU_DISCOVERY_EXTRA = -extra
+        GalaxyGroup = compute_gpu
         # run with partitionable slots
         CLAIM_PARTITIONABLE_LEFTOVERS = True
         NUM_SLOTS = 1
@@ -100,6 +101,8 @@ resource "openstack_compute_instance_v2" "gpu-node" {
       - sudo dnf install -y epel-release
       - sudo dnf config-manager --add-repo https://developer.download.nvidia.com/compute/cuda/repos/rhel9/x86_64/cuda-rhel9.repo
       - sudo dnf clean -y all 
-      - sudo dnf install -y nvidia-driver nvidia-driver-cuda nvidia-driver-NVML 
+      - sudo dnf install -y nvidia-driver nvidia-driver-cuda nvidia-driver-NVML nvidia-container-toolkit
+      - sleep 10
+      - sudo reboot
   EOF
 }

@@ -71,8 +71,8 @@ variable "image" {
 variable "gpu_image" {
   type = map
   default = {
-    "name"             = "vggp-v60-j334-00829423b35b-dev" //"vggp-v60-j340-e3937ea797ed-dev"
-    "image_source_url" = "https://usegalaxy.eu/static/vgcn/vggp-v60-j334-00829423b35b-dev.raw" // "https://usegalaxy.eu/static/vgcn/vggp-v60-j340-e3937ea797ed-dev.raw"
+    "name"             = "vggp-gpu-v60-j16-4b8cbb05c6db-dev" //"vggp-v60-j340-e3937ea797ed-dev"
+    "image_source_url" = "https://usegalaxy.eu/static/vgcn/vggp-gpu-v60-j16-4b8cbb05c6db-dev.raw" // "https://usegalaxy.eu/static/vgcn/vggp-v60-j340-e3937ea797ed-dev.raw"
     // you can check for the latest image on https://usegalaxy.eu/static/vgcn/ and replace this
     "container_format" = "bare"
     "disk_format"      = "raw"
