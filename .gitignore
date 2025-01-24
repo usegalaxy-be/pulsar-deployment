@@ -17,3 +17,7 @@
 .ssh_key
 .venv
 bin/
+
+# ansible
+.vault-password.txt
+.vault-password*.txt
