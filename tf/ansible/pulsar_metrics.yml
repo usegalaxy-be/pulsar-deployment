@@ -1,0 +1,13 @@
+---
+- name: Install Pulsar metric producer scripts
+  become: yes
+  hosts: all
+
+  vars:
+    pulsar_metric_role: producer
+
+  roles:
+    - name: pdg.pulsar-metrics
+      # become_user: pulsar
+      # become: yes
+

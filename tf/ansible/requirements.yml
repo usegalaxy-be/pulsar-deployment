@@ -1,0 +1,4 @@
+---
+roles:
+  - name: pdg.pulsar-metrics
+    src: https://github.com/pauldg/ansible-pulsar-metrics

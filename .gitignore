@@ -19,5 +19,7 @@
 bin/
 
 # ansible
+tf/ansible/roles/*
+
 .vault-password.txt
 .vault-password*.txt
