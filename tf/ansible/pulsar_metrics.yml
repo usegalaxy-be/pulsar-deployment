@@ -4,6 +4,17 @@
   hosts: all
 
   vars:
+    pulsar_app_dir_list:
+      - /opt/pulsar/config_pulsar_de02
+      - /opt/pulsar/config_pulsar_cz01 
+      - /opt/pulsar/config_pulsar_it01
+      - /opt/pulsar/config_pulsar_sp01
+      - /opt/pulsar/config_pulsar_uk01
+      - /opt/pulsar/config_pulsar_tr01
+      - /opt/pulsar/config_pulsar_no01
+      - /opt/pulsar/config_pulsar_pl01
+      - /opt/pulsar/config_pulsar_ch01
+      - /opt/pulsar/config_pulsar_sl01
     pulsar_metric_role: producer
 
   roles:
