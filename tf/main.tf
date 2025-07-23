@@ -19,42 +19,27 @@
 resource "openstack_compute_instance_v2" "central-manager" {
 
   name            = "${var.name_prefix}central-manager${var.name_suffix}"
-  flavor_name     = "${var.flavors["central-manager"]}"
-  image_id        = "${data.openstack_images_image_v2.vgcn-image.id}"
-  key_pair        = "${openstack_compute_keypair_v2.my-cloud-key.name}"
-  security_groups = "${var.secgroups_cm}"
-
-//  network {
-//    uuid = "${data.openstack_networking_network_v2.external.id}"
-//  }
-//  network {
-//    uuid = "${data.openstack_networking_network_v2.internal.id}"
-//  }
+  flavor_name     = var.flavors["central-manager"]
+  image_id        = openstack_images_image_v2.vgcn-image.id
+  key_pair        = openstack_compute_keypair_v2.my-cloud-key.name
+  security_groups = var.secgroups_cm
 
   network {	
-    port = "${openstack_networking_port_v2.central_manager_ip.id}"
+    port = openstack_networking_port_v2.central_manager_ip.id
+  }
+  network {
+    uuid = openstack_networking_network_v2.internal.id
   }
 
-
-// NOTE: this part fails even though the machine is accessible from the controller machine
-// Works by hand
-//  provisioner "local-exec" {
-//    command = <<-EOF
-//      ansible-galaxy install -p ansible/roles usegalaxy_eu.htcondor
-//      sleep 60
-//      ssh-keygen -f ~/.ssh/known_hosts -R '${self.access_ip_v4},'
-//        ANSIBLE_HOST_KEY_CHECKING=False ansible-playbook -u centos -b -i '${self.access_ip_v4},' \
-//        --private-key ${var.pvt_key} --extra-vars='condor_ip_range=${var.private_network["cidr4"]}
-//        condor_host=${self.network.0.fixed_ip_v4} condor_password=${var.condor_pass}
-//        message_queue_url="${var.mq_string}"' \
-//        ansible/main.yml
-//    EOF
-//  }
-
-  lifecycle {
-    ignore_changes = [
-      user_data
-    ]
+  provisioner "local-exec" {
+    command = <<-EOF
+      ansible-galaxy install -p ansible/roles -r ansible/requirements.yml
+        ANSIBLE_HOST_KEY_CHECKING=False ansible-playbook -u centos -b -i '${self.access_ip_v4},' \
+        --private-key ${var.pvt_key} --extra-vars='condor_ip_range=${var.private_network.cidr4}  
+        htcondor_server=${self.network.1.fixed_ip_v4} htcondor_password=${var.condor_pass}
+        message_queue_url="${var.mq_string}" tf_var_check=True' -e '${jsonencode(local.norm_ex_mqs)}' \
+        ansible/main.yml
+    EOF
   }
 
   user_data = <<-EOF

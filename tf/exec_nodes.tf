@@ -1,15 +1,15 @@
 resource "openstack_compute_instance_v2" "exec-node" {
 
-  count           = "${var.exec_node_count}"
+  count           = var.exec_node_count
   name            = "${var.name_prefix}exec-node-${count.index}${var.name_suffix}"
-  flavor_name     = "${var.flavors["exec-node"]}"
-  image_id        = "${data.openstack_images_image_v2.vgcn-image.id}"
-  key_pair        = "${openstack_compute_keypair_v2.my-cloud-key.name}"
-  security_groups = "${var.secgroups}"
+  flavor_name     = var.flavors["exec-node"]
+  image_id        = openstack_images_image_v2.vgcn-image.id
+  key_pair        = openstack_compute_keypair_v2.my-cloud-key.name
+  security_groups = var.secgroups
 
 
   network {
-    uuid = "${data.openstack_networking_network_v2.internal.id}"
+    uuid = openstack_networking_network_v2.internal.id
   }
 
   lifecycle {
@@ -85,12 +85,13 @@ resource "openstack_compute_instance_v2" "exec-node" {
           hosts: all
           connection: local
           roles:
-            - name: usegalaxy_eu.htcondor
+            - name: ansible-htcondor-grycap
               vars:
-                condor_role: execute
-                condor_copy_template: false
-                condor_host: ${openstack_compute_instance_v2.central-manager.network.0.fixed_ip_v4}
-                condor_password: ${var.condor_pass}
+                htcondor_version: 24.x
+                htcondor_type_of_node: wn
+                htcondor_role_execute: true
+                htcondor_server: ${openstack_compute_instance_v2.central-manager.network.0.fixed_ip_v4}
+                htcondor_password: ${var.condor_pass}
           tasks:
             - name: Disable pulsar
               systemd:
@@ -107,7 +108,7 @@ resource "openstack_compute_instance_v2" "exec-node" {
       - [ sh, -xc, "sed -i 's|localhost.localdomain|$(hostname -f)|g' /etc/telegraf/telegraf.conf" ]
       - systemctl restart telegraf
       - [ python3, -m, pip, install, ansible ]
-      - [ ansible-galaxy, install, -p, /home/centos/roles, usegalaxy_eu.htcondor ]
+      - [ ansible-galaxy, install, -p, /home/centos/roles, "git+https://github.com/usegalaxy-eu/ansible-htcondor-grycap.git"]
       - [ ansible-playbook, -i, 'localhost,', /home/centos/condor.yml]
       - systemctl start condor
       EOF

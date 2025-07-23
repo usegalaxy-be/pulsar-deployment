@@ -2,6 +2,30 @@
 - name: Install HTCondor Central Manager on Pulsar
   become: yes
   hosts: all
+  gather_facts: false
+
+  pre_tasks:
+    - name: Wait for SSH to be ready
+      ansible.builtin.wait_for_connection:
+        delay: 60
+        timeout: 600
+        connect_timeout: 5
+        sleep: 60
+      when: tf_var_check | default(false)
+
+    - name: Gather Facts
+      ansible.builtin.setup:
+
+    - name: Install or upgrade Pulsar package
+      ansible.builtin.pip:
+        name: pulsar-app
+        virtualenv: "/opt/pulsar/venv3"
+        state: latest
+
+    - name: Restart autofs
+      ansible.builtin.systemd:
+        name: autofs.service
+        state: restarted
 
   handlers:
     - name: restart pulsar
@@ -12,17 +36,14 @@
         state: restarted
 
   roles:
-    - name: usegalaxy_eu.htcondor
+    - role: ansible-htcondor-grycap
       vars:
-        condor_role: central-manager
-        condor_copy_template: false
-    - usegalaxy-eu.bashrc
+        htcondor_version: "24.x"
+        htcondor_type_of_node: "front"
+        htcondor_role_manager: true
+        htcondor_role_submit: true
+    - role: usegalaxy-eu.bashrc
 
-  pre_tasks:
-    - name: Restart autofs
-      ansible.builtin.systemd:
-        name: autofs.service
-        state: restarted
   tasks:
     - name: import cron tasks
       include_tasks: cron.yml
@@ -42,7 +63,7 @@
         state: directory
         mode: '0775'
         owner: pulsar
-        group: pulsar 
+        group: pulsar
       become_user: pulsar
       become: yes
 
@@ -52,9 +73,54 @@
         dest: "{{ pulsar_root }}/config/app.yml"
         force: yes
         backup: yes
-        mode: 0700
+        mode: '0700'
         owner: pulsar
         group: pulsar
       notify: restart pulsar
       become: yes
+
+    - name: Multi Pulsar Deployment
+      when: ex_mqs_dict is defined and ex_mqs_dict | length > 0
+      block:
+        - name: Fail if additional message queues are not url
+          fail:
+            msg: "Invalid url, Key: {{ item.key }}"
+          with_dict: "{{ ex_mqs_dict }}"
+          when: item.value is not url
+
+        - name: Check queues dict if playbook wasnt launched with Terraform
+          when: not (tf_var_check | default(false))
+          block:
+            - name: Fail if duplicates queues are present
+              fail:
+                msg: "Duplicated queue found, Key: {{ item.key }}"
+              with_dict: "{{ ex_mqs_dict }}"
+              when: ( ex_mqs_dict.values() | list ).count(item.value) != 1
+
+            - name: Fail if the main queue is present between the extra queues
+              fail:
+                msg: "The {{ item.key }} message queue is the main one!"
+              with_dict: "{{ ex_mqs_dict }}"
+              when: message_queue_url == item.value
+
+        - name: Extra Message Queues Pulsar Services
+          include_tasks: add_extra_queues.yml
+          loop: "{{ ex_mqs_dict | dict2items }}"
+          loop_control:
+            loop_var: extra_mqs
+          vars:
+            pulsar_container_image_cache_path: "/data/share/var/database/container_cache"
+            pulsar_dependencies_dir: "/data/share/tools/"
+            pulsar_data_path: "/data/share/{{ mq_id }}"
+            pulsar_persistence_dir: "{{ pulsar_data_path }}/persisted_data"
+            pulsar_staging_dir: "{{ pulsar_data_path }}/staging"
+            pulsar_config_dir: "{{ pulsar_root }}/config_{{ mq_id }}"
+            pulsar_venv_dir: "{{ pulsar_root }}/venv3"
+            pulsar_systemd_service_name: "pulsar_{{ mq_id }}"
+            pulsar_user: pulsar
+            pulsar_systemd: true
+            pulsar_systemd_runner: webless
+            extra_mq_url: "{{ extra_mqs.value }}"
+            mq_id: "{{ extra_mqs.key }}"
+
 

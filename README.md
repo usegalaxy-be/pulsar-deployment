@@ -1,5 +1,20 @@
 # UseGalaxy.eu Terraform recipes for Pulsar Endpoint
 
+>**:warning: Compatibility:**
+These changes were tested on Terraform v1.10.x. Compatibility with previous versions is not guaranteed.
+
+
+>**:warning: IMPORTANT:**  
+If you get a error like this, you might need to change the respective api version in the resource in the terraform code. (e.g. openstack_blockstorage_volume_v2 instead of v3)
+Please contact us if the issue persists.
+~~~shell-session
+│ Error: Error creating OpenStack block storage client: No suitable endpoint could be found in the service catalog.
+│ 
+│   with openstack_blockstorage_volume_v2.volume_nfs_data,
+│   on nfs.tf line 33, in resource "openstack_blockstorage_volume_v2" "volume_nfs_data":
+│   33: resource "openstack_blockstorage_volume_v2" "volume_nfs_data" {
+~~~
+
 The  "virtual galaxy compute nodes" (VGCN) is a single very generic image
 which has all of the required components (pulsar, docker, singularity, autofs, CVMFS)
 to build a Pulsar Network endpoint with a condor cluster. The terraform
@@ -13,22 +28,34 @@ When you deploy this onto your OpenStack, this is just a normal HTCondor
 cluster + NFS Server. The NFS server is included by default, but you can remove
 it and point the compute nodes at your own NFS server.
 
-The terraform file defines three "resources":
+The terraform file defines three `compute resources`:
 
 - an NFS server
 - a central manager
 - one or more exec nodes
+
+The project also creates a NFS `volume` where your `Galaxy job working directories` will live in. The size is defined in the `vars.tf` file.
+
+Since we recommend to keep `security groups` and `networks` separated, because it reduces errors and increases security.  
+The project will create a private `network`, along with a respective `subnet`, `router` and `interface`, as well as the following `security groups` for you:
+| Name            | Description
+| --------------- | --------
+| `public-ssh`    | Allows ingress connections to the `central manager` on `port 22`.
+| `egress-public` | Allows egress to the whole internet (`0.0.0.0/0`) on all ports.
+| `ingress-private`| Allows ingress from the private subnet to all ports of all members of the private subnet.
+
+
 
 Each resource has a couple of different parameters, we have abstracted these
 into the `vars.tf` file where you can change them as you need.
 
 ## Requirements
 
-- An OpenStack Deployment where you want to launch VGCN
+- An OpenStack tenant where you want to launch your Pulsar endpoint, having a `public network`
 - API access to this OpenStack
 - [Terraform](https://www.terraform.io/)
 - [Ansible](https://www.ansible.com/)
-- The latest VGGP image ([here](https://usegalaxy.eu/static/vgcn/))
+- The latest VGCN image ([here](https://usegalaxy.eu/static/vgcn/))
 
 ## Setup
 
@@ -85,6 +112,18 @@ terraform apply -var "pvt_key=~/.ssh/<key>" -var "condor_pass=<condor-passord>" 
 
 This way Pulsar will be deployed in one step and the secrets will not live in
 a terraform state file, they can be stored in a vault or password manager instead.
+
+### Multiple Pulsar Services
+
+To deploy multiple Pulsar services on a single node, follow the previous steps and define the `extra_mq_urls` variable in [`vars.tf`](./tf/vars.tf) with the additional RabbitMQ credentials.
+
+To deploy everything in a single step, use the following command:
+
+```bash
+terraform apply -var "pvt_key=~/.ssh/<key>" -var "condor_pass=<condor-passord>" -var "mq_string=pyamqp://<pulsar>:<password>@mq.galaxyproject.eu:5671//pulsar/<pulsar>?ssl=1" -var 'extra_mq_urls={test01="pyamqp_url01", test02="pyamqp_url02"}'
+```
+
+In this setup, the keys of the `extra_mq_urls` dictionary will be used to configure the additional Pulsar services. As with the single service deployment command the secrets will not live in a terraform state file.
 
 ## LICENSE
 
