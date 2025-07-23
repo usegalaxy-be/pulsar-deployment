@@ -1,0 +1,16 @@
+---
+- name: Install reference data mount
+  become: yes
+  hosts: exec
+
+  roles:
+    - name: pdg.autofs
+      vars:
+        autofs_mounts:
+          - name: "srv"
+            conf:
+              - "galaxy  -rw,hard,intr,nosuid,quota  10.113.48.250:/srv/galaxy"
+            mountpoint: "/srv"
+            conf_location: "/etc/auto.srv"
+            map_options: "nfsvers=3 browse"
+

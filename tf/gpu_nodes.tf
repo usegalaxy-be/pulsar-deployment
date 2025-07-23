@@ -67,9 +67,19 @@ resource "openstack_compute_instance_v2" "gpu-node" {
       path: /etc/auto.master.d/data.autofs
       permissions: '0644'
     - content: |
+        /srv           /etc/auto.srv          nfsvers=3
+      owner: root:root
+      path: /etc/auto.master.d/srv.autofs
+      permissions: '0644'
+    - content: |
         share  -rw,hard,intr,nosuid,quota  ${openstack_compute_instance_v2.nfs-server.access_ip_v4}:/data/share
       owner: root:root
       path: /etc/auto.data
+      permissions: '0644'
+    - content: |
+        srv  -rw,hard,intr,nosuid,quota  ${openstack_compute_instance_v2.nfs-server.access_ip_v4}:/srv
+      owner: root:root
+      path: /etc/auto.srv
       permissions: '0644'
     - content: |
         ---

@@ -57,6 +57,7 @@ data "template_cloudinit_config" "nfs-share" {
     write_files:
     - content: |
         /data/share *(rw,sync)
+        /srv/galaxy *(rw,sync)
       owner: root:root
       path: /etc/exports
       permissions: '0644'

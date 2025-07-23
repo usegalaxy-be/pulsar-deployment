@@ -1,0 +1,9 @@
+[exec]
+vgcn-pulsar-central-manager-vib ansible_host=10.113.48.10 ansible_port=22 ansible_user=centos
+# vgcn-pulsar-exec-node-0-vib ansible_host=10.113.48.169 ansible_port=22 ansible_user=centos
+# vgcn-pulsar-exec-node-1-vib ansible_host=10.113.48.200 ansible_port=22 ansible_user=centos
+# vgcn-pulsar-exec-node-2-vib ansible_host=10.113.48.49 ansible_port=22 ansible_user=centos
+# vgcn-pulsar-exec-node-3-vib ansible_host=10.113.48.109 ansible_port=22 ansible_user=centos
+# vgcn-pulsar-gpu-node-0-vib ansible_host=10.113.48.75 ansible_port=22 ansible_user=centos
+# vgcn-pulsar-gpu-node-1-vib ansible_host=10.113.48.40 ansible_port=22 ansible_user=centos
+# vgcn-pulsar-gpu-node-2-vib ansible_host=10.113.48.134 ansible_port=22 ansible_user=centos
